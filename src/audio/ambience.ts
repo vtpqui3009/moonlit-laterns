@@ -1,12 +1,16 @@
 import { cinema, nightness, shotWeight } from '../cinema/director'
+import { CYMBAL_BAR, DRUM_BAR, STEP, STEPS_PER_BAR, TUNE } from './festivalTune'
 
 /**
- * The night's soundscape, synthesised with WebAudio — no audio files:
- * crickets, a soft wind, a warm pentatonic pad, wind-chime notes, and the
- * lion-dance drum ("tùng dinh dinh, cắc tùng dinh dinh") that swells as the
- * procession passes. Layer volumes follow the playhead.
+ * The night's soundscape, synthesised with WebAudio — no audio files needed:
+ * an original, cheerful festival tune (plucked đàn tranh-like melody, sáo
+ * flute, bass, lion-dance drums and chũm chọe cymbals) over crickets and a
+ * soft wind. The drums swell as the procession passes.
+ * If `public/audio/nhac-nen.mp3` exists, that track plays instead of the tune.
  * Browsers only allow sound after a tap, so `start()` is called from a click.
  */
+
+const CUSTOM_TRACK = `${import.meta.env.BASE_URL}audio/nhac-nen.mp3`
 
 // Vietnamese-sounding pentatonic (ngũ cung) around D: D E G A B
 const PENTA = [293.66, 329.63, 392.0, 440.0, 493.88, 587.33, 659.25, 783.99]
@@ -14,15 +18,15 @@ const PENTA = [293.66, 329.63, 392.0, 440.0, 493.88, 587.33, 659.25, 783.99]
 class Ambience {
   private ctx: AudioContext | null = null
   private master!: GainNode
-  private layers!: { wind: GainNode; crickets: GainNode; pad: GainNode; chimes: GainNode; drum: GainNode }
+  private layers!: { wind: GainNode; crickets: GainNode; pad: GainNode; music: GainNode; drum: GainNode }
   private reverbIn!: GainNode
   private noise!: AudioBuffer
   private timer = 0
   private raf = 0
   private nextChirp = 0
-  private nextChime = 0
-  private nextBeat = 0
-  private beat = 0
+  private nextStep = 0
+  private step = 0
+  private customTrack = false
   private drumEnabled = true
   private muted = false
 
@@ -65,8 +69,8 @@ class Ambience {
       g.connect(this.master)
       return g
     }
-    this.layers = { wind: mk(), crickets: mk(), pad: mk(), chimes: mk(), drum: mk() }
-    this.layers.chimes.connect(this.reverbIn)
+    this.layers = { wind: mk(), crickets: mk(), pad: mk(), music: mk(), drum: mk() }
+    this.layers.music.connect(this.reverbIn)
     this.layers.drum.connect(this.reverbIn)
 
     // white noise buffer shared by wind and percussion
@@ -78,8 +82,8 @@ class Ambience {
     this.buildPad()
     const t = ctx.currentTime
     this.nextChirp = t + 0.5
-    this.nextChime = t + 2
-    this.nextBeat = t + 0.2
+    this.nextStep = t + 0.8
+    void this.tryCustomTrack()
     this.timer = window.setInterval(() => this.schedule(), 90)
     const tick = () => {
       this.mix()
@@ -102,6 +106,13 @@ class Ambience {
     this.bellNote(PENTA[0] / 2, t, 0.35, 6, this.master)
     this.bellNote(PENTA[3], t + 0.6, 0.12, 4, this.master)
     this.bellNote(PENTA[5], t + 1.2, 0.1, 4, this.master)
+  }
+
+  /** Dev/testing: a MediaStream of the final mix (for recording). */
+  tap() {
+    const dest = this.ctx!.createMediaStreamDestination()
+    this.master.connect(dest)
+    return dest.stream
   }
 
   stop() {
@@ -172,7 +183,7 @@ class Ambience {
     }
   }
 
-  /** Lookahead scheduler for crickets, chimes and the drum pattern. */
+  /** Lookahead scheduler for crickets and the festival tune. */
   private schedule() {
     const ctx = this.ctx!
     const ahead = ctx.currentTime + 0.25
@@ -180,20 +191,148 @@ class Ambience {
       this.chirp(this.nextChirp, Math.random() > 0.5 ? 4300 : 4750)
       this.nextChirp += 0.55 + Math.random() * 0.9
     }
-    while (this.nextChime < ahead) {
-      const n = PENTA[Math.floor(Math.random() * PENTA.length)]
-      this.bellNote(n * 2, this.nextChime, 0.1 + Math.random() * 0.08, 3.2, this.layers.chimes)
-      if (Math.random() > 0.6) this.bellNote(n * 3, this.nextChime + 0.18, 0.05, 2.5, this.layers.chimes)
-      this.nextChime += 2.4 + Math.random() * 4
+    // the festival tune, one eighth note at a time
+    while (this.nextStep < ahead) {
+      if (!this.customTrack) this.playStep(this.step % TUNE.length, this.nextStep)
+      this.step++
+      this.nextStep += STEP
     }
-    // tùng dinh dinh · cắc tùng dinh dinh (8th notes at ~104 bpm)
-    const step = 60 / 104 / 2
-    const pattern = ['tung', 'dinh', 'dinh', '-', 'cac', 'tung', 'dinh', 'dinh']
-    while (this.nextBeat < ahead) {
-      const hit = pattern[this.beat % pattern.length]
-      if (this.drumEnabled && hit !== '-') this.drum(hit as 'tung' | 'dinh' | 'cac', this.nextBeat)
-      this.beat++
-      this.nextBeat += step
+  }
+
+  private playStep(step: number, t: number) {
+    for (const n of TUNE.melody) {
+      if (n.step !== step) continue
+      this.pluck(n.freq, t, n.len * STEP)
+      if (n.flute) this.flute(n.freq * 2, t, n.len * STEP)
+    }
+    for (const b of TUNE.bass) if (b.step === step) this.bassNote(b.freq, t)
+    const inBar = step % STEPS_PER_BAR
+    const hit = DRUM_BAR[inBar]
+    if (this.drumEnabled && hit) this.drum(hit, t)
+    if (CYMBAL_BAR[inBar]) this.cymbal(t)
+  }
+
+  /** Plucked string (đàn tranh-like): bright attack that mellows quickly. */
+  private pluck(freq: number, t: number, dur: number) {
+    const ctx = this.ctx!
+    const g = ctx.createGain()
+    const decay = Math.min(dur + 0.35, 1.3)
+    g.gain.setValueAtTime(0, t)
+    g.gain.linearRampToValueAtTime(0.22, t + 0.004)
+    g.gain.exponentialRampToValueAtTime(0.0008, t + decay)
+    const lp = ctx.createBiquadFilter()
+    lp.type = 'lowpass'
+    lp.Q.value = 2
+    lp.frequency.setValueAtTime(4200, t)
+    lp.frequency.exponentialRampToValueAtTime(900, t + 0.25)
+    lp.connect(g)
+    g.connect(this.layers.music)
+    for (const [type, mult, amp, detune] of [
+      ['sawtooth', 1, 0.5, -4],
+      ['triangle', 1, 0.8, 3],
+      ['sine', 2, 0.25, 0],
+    ] as [OscillatorType, number, number, number][]) {
+      const o = ctx.createOscillator()
+      o.type = type
+      o.frequency.setValueAtTime(freq * mult * 1.012, t)
+      o.frequency.exponentialRampToValueAtTime(freq * mult, t + 0.04) // the little "nhấn" of a plucked string
+      o.detune.value = detune
+      const og = ctx.createGain()
+      og.gain.value = amp
+      o.connect(og)
+      og.connect(lp)
+      o.start(t)
+      o.stop(t + decay + 0.05)
+    }
+  }
+
+  /** Bamboo flute (sáo): soft sine with breath and a late vibrato. */
+  private flute(freq: number, t: number, dur: number) {
+    const ctx = this.ctx!
+    const len = Math.max(dur * 0.95, 0.15)
+    const g = ctx.createGain()
+    g.gain.setValueAtTime(0, t)
+    g.gain.linearRampToValueAtTime(0.045, t + 0.05)
+    g.gain.setValueAtTime(0.045, t + len - 0.06)
+    g.gain.linearRampToValueAtTime(0, t + len)
+    g.connect(this.layers.music)
+    const o = ctx.createOscillator()
+    o.frequency.value = freq
+    const vib = ctx.createOscillator()
+    vib.frequency.value = 5.5
+    const vibDepth = ctx.createGain()
+    vibDepth.gain.setValueAtTime(0, t)
+    vibDepth.gain.linearRampToValueAtTime(freq * 0.006, t + Math.min(0.25, len))
+    vib.connect(vibDepth)
+    vibDepth.connect(o.frequency)
+    o.connect(g)
+    // breath noise
+    const air = ctx.createBufferSource()
+    air.buffer = this.noise
+    const bp = ctx.createBiquadFilter()
+    bp.type = 'bandpass'
+    bp.frequency.value = freq * 2
+    bp.Q.value = 6
+    const ag = ctx.createGain()
+    ag.gain.value = 0.25
+    air.connect(bp)
+    bp.connect(ag)
+    ag.connect(g)
+    for (const n of [o, vib]) {
+      n.start(t)
+      n.stop(t + len + 0.02)
+    }
+    air.start(t, Math.random())
+    air.stop(t + len + 0.02)
+  }
+
+  private bassNote(freq: number, t: number) {
+    const ctx = this.ctx!
+    const o = ctx.createOscillator()
+    o.type = 'triangle'
+    o.frequency.value = freq
+    const g = ctx.createGain()
+    g.gain.setValueAtTime(0, t)
+    g.gain.linearRampToValueAtTime(0.3, t + 0.01)
+    g.gain.exponentialRampToValueAtTime(0.001, t + 0.45)
+    o.connect(g)
+    g.connect(this.layers.music)
+    o.start(t)
+    o.stop(t + 0.5)
+  }
+
+  /** Chũm chọe: bright, short metallic noise. */
+  private cymbal(t: number) {
+    const ctx = this.ctx!
+    const src = ctx.createBufferSource()
+    src.buffer = this.noise
+    const hp = ctx.createBiquadFilter()
+    hp.type = 'highpass'
+    hp.frequency.value = 6500
+    const g = ctx.createGain()
+    g.gain.setValueAtTime(0.16, t)
+    g.gain.exponentialRampToValueAtTime(0.001, t + 0.14)
+    src.connect(hp)
+    hp.connect(g)
+    g.connect(this.layers.drum)
+    src.start(t, Math.random())
+    src.stop(t + 0.16)
+  }
+
+  /** Use the viewer-supplied track (public/audio/nhac-nen.mp3) instead of the synthesised tune, if present. */
+  private async tryCustomTrack() {
+    try {
+      const res = await fetch(CUSTOM_TRACK, { method: 'HEAD' })
+      if (!res.ok || !(res.headers.get('content-type') ?? '').startsWith('audio')) return
+      const el = new Audio(CUSTOM_TRACK)
+      el.loop = true
+      el.crossOrigin = 'anonymous'
+      const src = this.ctx!.createMediaElementSource(el)
+      src.connect(this.layers.music)
+      await el.play()
+      this.customTrack = true
+    } catch {
+      // no custom track — keep the synthesised tune
     }
   }
 
@@ -284,12 +423,18 @@ class Ambience {
     const n = nightness(p)
     const t = ctx.currentTime
     const set = (g: GainNode, v: number) => g.gain.setTargetAtTime(v, t, 0.6)
-    set(this.layers.wind, 0.05 - n * 0.025)
-    set(this.layers.crickets, 0.05 + n * 0.08)
-    set(this.layers.pad, 0.035 + n * 0.03)
-    set(this.layers.chimes, 0.5 + shotWeight(p, 3, 1) * 0.3)
-    set(this.layers.drum, this.drumEnabled ? 0.03 + shotWeight(p, 2, 1.1) * 0.22 : 0)
+    set(this.layers.wind, 0.035 - n * 0.02)
+    set(this.layers.crickets, 0.02 + n * 0.035)
+    set(this.layers.pad, 0.012)
+    set(this.layers.music, this.customTrack ? 0.9 : 0.55 + shotWeight(p, 3, 1) * 0.1)
+    // the lion-dance drums are part of the tune, and swell when the procession passes
+    set(this.layers.drum, this.customTrack ? 0 : 0.18 + shotWeight(p, 2, 1.1) * 0.3)
   }
 }
 
 export const ambience = new Ambience()
+
+// Dev-only hooks: record the soundscape from automated tests.
+if (import.meta.env.DEV) {
+  ;(window as unknown as { __ambience: Ambience }).__ambience = ambience
+}

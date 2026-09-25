@@ -72,6 +72,15 @@ Lân nhún theo nhịp, ngó quanh, chớp mắt, đớp; lá khô rơi rồi n�
 DepthOfField lấy nét theo cảnh → Bloom (mạnh nhất ở trăng rằm) → ACES tone mapping → split-tone
 (bóng tối xanh chàm, vùng sáng vàng cam đèn lồng, đen nâng xanh) → contrast → chromatic aberration rất nhẹ → vignette → film grain rất thấp.
 
+## Âm thanh
+Toàn bộ âm thanh được tạo bằng WebAudio, không có file nào (`src/audio/`). Gồm:
+- một giai điệu Trung Thu **tự sáng tác** ("Đêm hội", ngũ cung D–E–F#–A–B, 116 bpm, cấu trúc A B A C):
+  đàn gảy kiểu đàn tranh, sáo, bass, trống lân ("tùng · cắc tùng tùng · cắc dinh") và chũm chọe;
+- tiếng dế và gió ở nền.
+
+Trống to dần khi tới cảnh rước đèn. Tiếng chuông vang lên khi thả đèn ước. Có nút tắt tiếng.
+Muốn dùng bài nhạc riêng: đặt `public/audio/nhac-nen.mp3` (xem `public/audio/README.md`).
+
 ## Hiệu năng & trợ năng
 - Hai mức chất lượng: tự chọn `low` trên thiết bị cảm ứng / màn hẹp. `PerformanceMonitor` tự hạ xuống `low` nếu FPS tụt.
 - Mức `low`: DPR ≤ 1.5, không DOF/CA, không MSAA, shadow map 1024, ít trẻ em/đèn/PointLight hơn
