@@ -27,5 +27,13 @@ export default defineConfig(({ mode }) => ({
   // Relative base so the built site works from any sub-path (static hosting, artifact preview).
   base: './',
   plugins: [react(), modelManifest(), mode === 'single' && inlineHdri()],
-  build: mode === 'single' ? { outDir: 'dist-single', copyPublicDir: false } : undefined,
+  build:
+    mode === 'single'
+      ? {
+          outDir: 'dist-single',
+          copyPublicDir: false,
+          // one JS file, so the page can be inlined into a single self-contained HTML
+          rolldownOptions: { output: { inlineDynamicImports: true } },
+        }
+      : undefined,
 }))

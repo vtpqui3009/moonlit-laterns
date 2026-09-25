@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build",
     "build:single": "tsc -b && vite build --mode single",
     "typecheck": "tsc -b --noEmit",
-    "preview": "vite preview --host"
+    "preview": "vite preview --host",
+    "build:html": "npm run build:single && node scripts/inline-html.mjs"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.8",
