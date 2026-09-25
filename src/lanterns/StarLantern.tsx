@@ -48,7 +48,7 @@ export function StarLantern({
   glowColor = '#ff5a1f',
   lightColor = '#ff8a4c',
   intensity = 3,
-  castLightShadow = true,
+  castLightShadow = false,
   withLight = true,
   shadowWhen,
   seed = 1,

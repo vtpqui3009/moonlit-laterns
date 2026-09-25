@@ -65,9 +65,9 @@ export function PostFX() {
   })
 
   return (
-    <EffectComposer multisampling={high ? 4 : 0}>
+    <EffectComposer multisampling={0}>
       {high && <DepthOfField ref={dof} target={[0, 0, 0]} worldFocusRange={10} bokehScale={2} resolutionScale={0.5} />}
-      <Bloom ref={bloom} mipmapBlur luminanceThreshold={0.95} luminanceSmoothing={0.25} intensity={0.9} radius={0.78} />
+      <Bloom ref={bloom} mipmapBlur resolutionScale={high ? 1 : 0.5} luminanceThreshold={0.95} luminanceSmoothing={0.25} intensity={0.9} radius={0.78} />
       <ToneMapping mode={ToneMappingMode.ACES_FILMIC} />
       <primitive object={grade} />
       <BrightnessContrast brightness={0.01} contrast={0.06} />

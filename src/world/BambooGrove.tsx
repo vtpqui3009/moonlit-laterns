@@ -16,10 +16,10 @@ export function BambooGrove({
   gaps = [] as [number, number][],
 }) {
   const quality = useSceneStore((s) => s.quality)
-  const clumps = quality === 'high' ? 90 : 50
+  const clumps = quality === 'high' ? 70 : 40
   const perClump = 7
   const culmCount = clumps * perClump
-  const leafCount = culmCount * (quality === 'high' ? 10 : 6)
+  const leafCount = culmCount * (quality === 'high' ? 7 : 4)
 
   const culmGeo = useMemo(() => {
     // unit culm: 1 m tall, slight arch toward +x
@@ -88,7 +88,7 @@ export function BambooGrove({
 
   return (
     <group>
-      <instancedMesh ref={culms} args={[culmGeo, culmMat, culmCount]} castShadow />
+      <instancedMesh ref={culms} args={[culmGeo, culmMat, culmCount]} castShadow={quality === 'high'} />
       <instancedMesh ref={leaves} args={[undefined, leafMat, leafCount]}>
         <planeGeometry args={[1, 1]} />
       </instancedMesh>

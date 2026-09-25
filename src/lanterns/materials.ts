@@ -5,25 +5,19 @@ import { bambooTextures, cellophaneNormal, haloTexture, lanternGlow } from '../l
 export const PAPER_GLOW = 1.05
 
 /**
- * Coloured cellophane ("giấy kính") stretched over the lantern frame.
- * transmission → the frame and candle are visible through the paper;
- * emissive (with a radial map) → the paper glows from within, brightest near the candle.
+ * Coloured cellophane ("giấy kính") stretched over the lantern frame. It glows
+ * from within through an emissive radial map (brightest near the candle), with a
+ * crinkled normal map for the sheen. No `transmission`: that would make three
+ * render the whole scene a second time every frame, too heavy for phones.
  */
 export function makeCellophane(color: THREE.ColorRepresentation, glow: THREE.ColorRepresentation) {
-  return new THREE.MeshPhysicalMaterial({
+  return new THREE.MeshStandardMaterial({
     color,
     emissive: glow,
     emissiveMap: lanternGlow(),
     emissiveIntensity: PAPER_GLOW,
-    transmission: 0.55,
-    thickness: 0.04,
-    attenuationColor: new THREE.Color(glow),
-    attenuationDistance: 0.35,
-    ior: 1.45,
-    roughness: 0.32,
+    roughness: 0.3,
     metalness: 0,
-    clearcoat: 0.7,
-    clearcoatRoughness: 0.22,
     normalMap: cellophaneNormal(),
     normalScale: new THREE.Vector2(0.35, 0.35),
     side: THREE.DoubleSide,

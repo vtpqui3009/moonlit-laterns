@@ -23,9 +23,17 @@ interface SceneState {
   progress: number
   quality: Quality
   reducedMotion: boolean
+  /** Assets loaded and shaders compiled — safe to lift the loading veil. */
+  ready: boolean
+  /** The viewer pressed "Bắt đầu" (unlocks audio and scrolling). */
+  started: boolean
+  /** The wish lantern has been released and the letter is showing. */
+  letterOpen: boolean
+  muted: boolean
   setStage: (stage: number) => void
   setProgress: (progress: number) => void
   setQuality: (quality: Quality) => void
+  set: (patch: Partial<Pick<SceneState, 'ready' | 'started' | 'letterOpen' | 'muted'>>) => void
 }
 
 export const useSceneStore = create<SceneState>((set) => ({
@@ -33,9 +41,14 @@ export const useSceneStore = create<SceneState>((set) => ({
   progress: 0,
   quality: forcedQuality() ?? (isLikelyMobile() ? 'low' : 'high'),
   reducedMotion: prefersReducedMotion(),
+  ready: false,
+  started: false,
+  letterOpen: false,
+  muted: false,
   setStage: (stage) => set({ stage }),
   setProgress: (progress) => set({ progress }),
   setQuality: (quality) => set({ quality }),
+  set: (patch) => set(patch),
 }))
 
 if (typeof window !== 'undefined' && window.matchMedia) {

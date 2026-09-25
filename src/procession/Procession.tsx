@@ -96,7 +96,7 @@ export function Procession() {
   const quality = useSceneStore((s) => s.quality)
   const reducedMotion = useSceneStore((s) => s.reducedMotion)
   const walkers = useMemo(
-    () => (quality === 'high' ? buildWalkers(16, 9, 5) : buildWalkers(10, 4, 1)),
+    () => (quality === 'high' ? buildWalkers(14, 4, 0) : buildWalkers(8, 1, 0)),
     [quality],
   )
   const kids = useRef<(ChildHandle | null)[]>([])

@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import * as THREE from 'three'
 import { limeWall, makeCanvas, toTexture, woodGrain } from '../lib/textures'
+import { useSceneStore } from '../store/useSceneStore'
 import { curvedRoofGeometry, gableGeometry, ridgeCurve } from './roofGeometry'
 import { lacquerWood, roofTileNormal, roofTiles } from './worldTextures'
 
@@ -32,6 +33,7 @@ function plaqueTexture() {
  * roof with curled corners and "lưỡng long chầu nguyệt" on the ridge.
  */
 export function Dinh({ position = [0, 0, 0] as [number, number, number] }) {
+  const quality = useSceneStore((s) => s.quality)
   const parts = useMemo(() => {
     const roof = curvedRoofGeometry({ width: W, depth: D, ridgeY: RIDGE, eaveY: EAVE, overhang: 1.5, curl: 0.9, sag: 0.35 })
     const tiles = roofTiles()
@@ -131,7 +133,7 @@ export function Dinh({ position = [0, 0, 0] as [number, number, number] }) {
       <mesh position={[0, 1.2, -D / 2 + 0.7]} material={parts.mats.altar}>
         <boxGeometry args={[2.6, 1.3, 0.6]} />
       </mesh>
-      <pointLight position={[0, 2, -D / 2 + 1.8]} color="#ff9a4a" intensity={6} distance={9} decay={2} />
+      {quality === 'high' && <pointLight position={[0, 2, -D / 2 + 1.8]} color="#ff9a4a" intensity={6} distance={9} decay={2} />}
 
       {/* horizontal plaque */}
       <mesh position={[0, EAVE - 0.35, D / 2 - 0.05]} material={parts.mats.plaque}>

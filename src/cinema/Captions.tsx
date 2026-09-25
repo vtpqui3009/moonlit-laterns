@@ -35,12 +35,13 @@ function clampedPosition(el: THREE.Object3D, camera: THREE.Camera, size: { width
 export function Captions() {
   const refs = useRef<(HTMLDivElement | null)[]>([])
   const reducedMotion = useSceneStore((s) => s.reducedMotion)
+  const letterOpen = useSceneStore((s) => s.letterOpen)
   useFrame(() => {
     // with reduced motion the camera cuts between shots, so captions cut with it
     const p = reducedMotion ? Math.round(cinema.p) : cinema.p
     refs.current.forEach((el, i) => {
       if (!el) return
-      const w = shotWeight(p, i, 0.42)
+      const w = letterOpen ? 0 : shotWeight(p, i, 0.42)
       const o = Math.min(1, w * 1.6)
       el.style.opacity = o.toFixed(3)
       el.style.transform = `translateY(${((1 - o) * 14).toFixed(1)}px)`

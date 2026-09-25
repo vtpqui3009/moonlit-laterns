@@ -61,7 +61,7 @@ export function LionDance({ position = [0, 0, 0] as [number, number, number], fa
   const legs = useRef<(THREE.Group | null)[]>([])
 
   const geo = useMemo(() => {
-    const clothGeo = new THREE.PlaneGeometry(1.15, 2.3, 16, 40)
+    const clothGeo = new THREE.PlaneGeometry(1.15, 2.3, 10, 24)
     clothGeo.rotateX(-Math.PI / 2)
     return {
       skull: skullGeometry(),
@@ -80,7 +80,7 @@ export function LionDance({ position = [0, 0, 0] as [number, number, number], fa
   const mats = useMemo(() => {
     const paint = lionPaint()
     return {
-      paint: new THREE.MeshPhysicalMaterial({ map: paint, bumpMap: paint, bumpScale: 0.6, roughness: 0.55, clearcoat: 0.3, clearcoatRoughness: 0.6 }),
+      paint: new THREE.MeshStandardMaterial({ map: paint, bumpMap: paint, bumpScale: 0.6, roughness: 0.55, emissive: '#ffffff', emissiveMap: paint, emissiveIntensity: 0.22 }),
       red: new THREE.MeshStandardMaterial({ color: '#c01818', roughness: 0.5 }),
       mouth: new THREE.MeshStandardMaterial({ color: '#3a0606', roughness: 0.8 }),
       teeth: new THREE.MeshStandardMaterial({ color: '#f4f0e0', roughness: 0.4 }),
@@ -268,7 +268,6 @@ export function LionDance({ position = [0, 0, 0] as [number, number, number], fa
           </mesh>
         ))}
         <instancedMesh ref={mane} args={[furGeo, furMat, 170]} castShadow />
-        <pointLight position={[0, 0.08, 0.6]} color="#ffe6a0" intensity={0.3} distance={3} decay={2} />
       </group>
     </group>
   )

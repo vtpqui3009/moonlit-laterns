@@ -13,7 +13,7 @@ import { leafCard } from './worldTextures'
  */
 export function Banyan({ position = [0, 0, 0] as [number, number, number], seed = 5 }) {
   const quality = useSceneStore((s) => s.quality)
-  const leafCount = quality === 'high' ? 2600 : 1100
+  const leafCount = quality === 'high' ? 1800 : 700
 
   const { wood, roots, clumps } = useMemo(() => {
     const rnd = mulberry32(seed)
@@ -108,7 +108,7 @@ export function Banyan({ position = [0, 0, 0] as [number, number, number], seed 
       <mesh geometry={wood} material={barkMat} castShadow receiveShadow />
       <group ref={canopy}>
         <mesh geometry={roots} material={barkMat} castShadow />
-        <instancedMesh ref={leaves} args={[undefined, undefined, leafCount]} material={leafMat} castShadow receiveShadow>
+        <instancedMesh ref={leaves} args={[undefined, undefined, leafCount]} material={leafMat} castShadow={quality === 'high'}>
           <planeGeometry args={[1, 1]} />
         </instancedMesh>
       </group>

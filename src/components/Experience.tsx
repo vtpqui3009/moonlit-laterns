@@ -1,6 +1,6 @@
 import { Canvas, useThree } from '@react-three/fiber'
-import { useEffect } from 'react'
-import { PerformanceMonitor, Stats } from '@react-three/drei'
+import { useEffect, useRef } from 'react'
+import { PerformanceMonitor, Stats, useProgress } from '@react-three/drei'
 import * as THREE from 'three'
 import { CameraRig } from '../cinema/CameraRig'
 import { Captions } from '../cinema/Captions'
@@ -18,6 +18,31 @@ function ResponsiveLens() {
     camera.fov = aspect < 0.8 ? 58 : aspect < 1.2 ? 48 : 40
     camera.updateProjectionMatrix()
   }, [aspect, camera])
+  return null
+}
+
+/**
+ * Once every asset is in, compile all shaders up front (with the final light
+ * count) so the first seconds of the film don't stutter, then lift the veil.
+ */
+function Warmup() {
+  const gl = useThree((s) => s.gl)
+  const scene = useThree((s) => s.scene)
+  const camera = useThree((s) => s.camera)
+  const { active, progress } = useProgress()
+  const started = useRef(false)
+  useEffect(() => {
+    const finish = () => useSceneStore.getState().set({ ready: true })
+    const safety = setTimeout(finish, 20000)
+    if (started.current || active || progress < 100) return () => clearTimeout(safety)
+    started.current = true
+    requestAnimationFrame(() => {
+      gl.compileAsync(scene, camera)
+        .catch(() => undefined)
+        .finally(() => requestAnimationFrame(finish))
+    })
+    return () => clearTimeout(safety)
+  }, [active, progress, gl, scene, camera])
   return null
 }
 
@@ -42,7 +67,7 @@ export default function Experience() {
         // three r18x removed PCFSoftShadowMap (it now logs a warning and falls back);
         // PCFShadowMap + shadow.radius is the soft-PCF path (Vogel-disk filtering).
         shadows={{ enabled: true, type: THREE.PCFShadowMap }}
-        dpr={quality === 'high' ? [1, 2] : [1, 1.5]}
+        dpr={quality === 'high' ? [1, 1.5] : 1}
         gl={{ antialias: true, powerPreference: 'high-performance' }}
         onCreated={({ gl }) => {
           gl.toneMapping = THREE.ACESFilmicToneMapping
@@ -60,6 +85,7 @@ export default function Experience() {
         />
         {showStats && <Stats />}
         <RendererTier />
+        <Warmup />
         <ResponsiveLens />
         <CameraRig />
         <LightingRig />

@@ -19,7 +19,7 @@ export function NightEnvironment() {
         <Environment files={HDRI} environmentIntensity={0.4} environmentRotation={[0, Math.PI * 0.6, 0]} />
       </SafeBoundary>
       <Sky />
-      <Stars radius={280} depth={60} count={quality === 'high' ? 5000 : 2000} factor={6} saturation={0.15} fade speed={still ? 0 : 0.3} />
+      <Stars radius={280} depth={60} count={quality === 'high' ? 4000 : 1500} factor={6} saturation={0.15} fade speed={still ? 0 : 0.3} />
       <Moon />
     </>
   )

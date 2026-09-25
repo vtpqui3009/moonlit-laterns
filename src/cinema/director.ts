@@ -29,7 +29,7 @@ export const SHOTS: Shot[] = [
     id: 'hoang-hon',
     title: 'Hoàng hôn buông',
     caption:
-      'Chiều rằm tháng Tám, nắng cuối ngày nhuộm vàng mái đình. Phía đông, vầng trăng vừa nhô lên sau lũy tre làng.',
+      'Chiều rằm tháng Tám. Anh muốn đưa em về một làng quê có mái đình, cây đa, và vầng trăng đang lên sau lũy tre.',
     camera: [-4, 2.4, 18],
     target: [0.5, 4.2, -8],
     focus: [0, 3, -8],
@@ -39,7 +39,7 @@ export const SHOTS: Shot[] = [
     id: 'mam-co',
     title: 'Mâm cỗ đoàn viên',
     caption:
-      'Bánh nướng, bánh dẻo, mâm ngũ quả bày giữa sân. Cả nhà quây quần phá cỗ, chờ trăng lên đỉnh ngọn tre.',
+      'Trung Thu là để quây quần phá cỗ. Năm nay anh chỉ mong một chỗ ngồi cạnh em, chia nhau nửa chiếc bánh nướng.',
     camera: [5.35, 1.22, 5.45],
     target: [3.3, 0.82, 2.85],
     focus: [3.45, 0.85, 2.95],
@@ -49,7 +49,7 @@ export const SHOTS: Shot[] = [
     id: 'ruoc-den',
     title: 'Rước đèn',
     caption:
-      'Tùng dinh dinh, cắc tùng dinh dinh… Đèn ông sao, đèn cá chép nối đuôi nhau quanh sân đình, theo nhịp trống múa lân.',
+      'Trẻ con rước đèn cho trăng khỏi lạc đường. Còn anh chỉ cần một ngọn đèn để tìm về phía em.',
     camera: [-5.2, 1.15, 13.2],
     target: [-1.6, 1.15, 5.2],
     focus: [-3.6, 1, 7.4],
@@ -59,7 +59,7 @@ export const SHOTS: Shot[] = [
     id: 'trang-ram',
     title: 'Trăng rằm',
     caption:
-      'Trăng tròn nhất năm soi xuống ao làng. Trung Thu là tết của trẻ em, và của những người được trở về bên nhau.',
+      'Trăng tròn nhất năm, người ta gọi là đoàn viên.',
     camera: [1, 1.7, 35],
     target: [0.5, 5, -12],
     focus: [0.5, 1.5, 16],

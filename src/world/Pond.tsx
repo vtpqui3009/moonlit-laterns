@@ -67,7 +67,7 @@ export function Pond() {
     // skip the (expensive) reflection render while the pond is off-screen —
     // but render it for the first frames so its shader compiles during loading, not mid-scroll
     frames.current++
-    water.current.visible = cinema.p > 1.6 || frames.current < 4
+    water.current.visible = cinema.p > 2.2 || frames.current < 4
   })
 
   return (
@@ -117,7 +117,7 @@ function Reeds({ reeds }: { reeds: { x: number; z: number; h: number; lean: numb
  */
 function MoonWater({ quality, ripple }: { quality: string; ripple: THREE.Texture }) {
   const reflector = useMemo(() => {
-    const res = quality === 'high' ? 1024 : 512
+    const res = quality === 'high' ? 512 : 256
     const geo = new THREE.CircleGeometry(1, 96)
     const r = new Reflector(geo, {
       textureWidth: res,

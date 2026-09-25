@@ -9,6 +9,7 @@ import { LionDance } from '../procession/LionDance'
 import { Procession } from '../procession/Procession'
 import { FallingLeaves } from '../world/FallingLeaves'
 import { FloatingLanterns } from '../world/FloatingLanterns'
+import { WishLantern } from '../world/WishLantern'
 import { StarLantern } from '../lanterns/StarLantern'
 import { useSceneStore } from '../store/useSceneStore'
 import { BambooGrove } from '../world/BambooGrove'
@@ -23,10 +24,10 @@ import { Terrain } from '../world/Terrain'
 
 export const TABLE_POS: [number, number, number] = [3.5, 0, 3]
 
-const HOUSES: { p: [number, number, number]; r: number; light?: boolean; w?: number }[] = [
-  { p: [17, 0, -10], r: -0.35, light: true },
+const HOUSES: { p: [number, number, number]; r: number; w?: number }[] = [
+  { p: [17, 0, -10], r: -0.35 },
   { p: [-18, 0, 7], r: 1.3, w: 6 },
-  { p: [17, 0, 10], r: -1.35, light: true },
+  { p: [17, 0, 10], r: -1.35 },
   { p: [-9, 0, -23], r: 0.1 },
   { p: [11, 0, -25], r: -0.2, w: 8 },
   { p: [-22, 0, -11], r: 0.9 },
@@ -59,7 +60,7 @@ export function World() {
       <ModelSlot id="dinh-lang" position={[0, 0, -9]} fallback={<Dinh />} />
       <ModelSlot id="cay-da" position={[-11.5, 0, -2.5]} fallback={<Banyan />} />
       {HOUSES.map((h, i) => (
-        <House key={i} position={h.p} rotation={h.r} width={h.w} withLight={h.light} />
+        <House key={i} position={h.p} rotation={h.r} width={h.w} />
       ))}
       <BambooGrove radius={48} />
       <Pond />
@@ -90,11 +91,12 @@ export function World() {
       <ModelSlot id="dau-lan" position={[-3.7, 0, 7]} rotation-y={-0.35} scale={1.12} fallback={<LionDance />} />
       <FallingLeaves origin={[-8.5, 0, 0]} spread={[8, 7]} top={9} />
       <FloatingLanterns />
+      <WishLantern />
 
       {/* lantern strings over the courtyard */}
-      <LanternGarland from={[-6.8, 4.0, -3.4]} to={[-8.5, 4.2, 10.5]} sag={0.9} lights={quality === 'high' ? 2 : 1} seed={1} />
-      <LanternGarland from={[6.8, 4.0, -3.4]} to={[8.5, 4.2, 10.5]} sag={0.9} lights={quality === 'high' ? 2 : 1} seed={3} />
-      <LanternGarland from={[-8.5, 4.2, 10.5]} to={[8.5, 4.2, 10.5]} sag={0.6} spacing={1.7} lights={quality === 'high' ? 2 : 0} seed={5} />
+      <LanternGarland from={[-6.8, 4.0, -3.4]} to={[-8.5, 4.2, 10.5]} sag={0.9} lights={0} seed={1} />
+      <LanternGarland from={[6.8, 4.0, -3.4]} to={[8.5, 4.2, 10.5]} sag={0.9} lights={0} seed={3} />
+      <LanternGarland from={[-8.5, 4.2, 10.5]} to={[8.5, 4.2, 10.5]} sag={0.6} spacing={1.7} lights={0} seed={5} />
       {[-8.5, 8.5].map((x) => (
         <mesh key={x} position={[x, 2.15, 10.5]} castShadow>
           <cylinderGeometry args={[0.05, 0.06, 4.3, 8]} />

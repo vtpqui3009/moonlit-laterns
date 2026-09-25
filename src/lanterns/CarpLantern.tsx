@@ -98,16 +98,13 @@ export function CarpLantern({
   const mats = useMemo(() => {
     const scales = carpScales()
     return {
-      body: new THREE.MeshPhysicalMaterial({
+      body: new THREE.MeshStandardMaterial({
         color,
         emissive: color,
         emissiveMap: scales,
         emissiveIntensity: 1.5,
         map: scales,
-        transmission: 0.35,
-        thickness: 0.05,
         roughness: 0.35,
-        clearcoat: 0.6,
         side: THREE.DoubleSide,
       }),
       fin: new THREE.MeshStandardMaterial({
