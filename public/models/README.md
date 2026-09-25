@@ -4,15 +4,15 @@ Mỗi vật thể chính được render qua `<ModelSlot id="...">`. Nếu thư 
 `<id>.glb` (hoặc `<id>.gltf`), scene tự load file đó thay cho model procedural —
 không cần sửa code. Dev server tự reload khi thêm/xoá file.
 
-| id           | Vật thể                         | Có từ bước |
-|--------------|---------------------------------|------------|
-| `ong-sao`    | Đèn ông sao                     | 1          |
-| `den-ca-chep`| Đèn cá chép                     | 3          |
-| `keo-quan`   | Đèn kéo quân                    | 3          |
-| `dau-lan`    | Đầu lân                         | 3          |
-| `mam-co`     | Mâm cỗ Trung Thu                | 2          |
-| `cay-da`     | Cây đa                          | 2          |
-| `mai-dinh`   | Mái đình / mái nhà ngói         | 2          |
+| id            | Vật thể                         | Gốc toạ độ của file .glb            |
+|---------------|---------------------------------|-------------------------------------|
+| `ong-sao`     | Đèn ông sao (treo & rước)       | điểm treo dây, đèn nằm bên dưới     |
+| `den-ca-chep` | Đèn cá chép                     | tâm thân cá, đầu hướng +X           |
+| `keo-quan`    | Đèn kéo quân                    | tâm đèn                             |
+| `dau-lan`     | Múa lân (đầu + thân)            | mặt đất dưới chân người múa trước, đầu hướng +Z |
+| `mam-co`      | Mâm cỗ Trung Thu                | đáy mâm, đặt trên mặt chõng         |
+| `cay-da`      | Cây đa                          | gốc cây trên mặt đất                |
+| `dinh-lang`   | Đình làng                       | tâm nền đình, mặt tiền hướng +Z     |
 
 Quy ước:
 - Đơn vị mét, trục Y hướng lên. Với đèn treo, gốc toạ độ (0,0,0) là điểm treo dây.

@@ -1,5 +1,6 @@
 import { Canvas, useThree } from '@react-three/fiber'
 import { useEffect } from 'react'
+import { PerformanceMonitor, Stats } from '@react-three/drei'
 import * as THREE from 'three'
 import { CameraRig } from '../cinema/CameraRig'
 import { Captions } from '../cinema/Captions'
@@ -20,8 +21,21 @@ function ResponsiveLens() {
   return null
 }
 
-export function Experience() {
+/** Transmission (lantern cellophane) renders an extra scene pass; halve it on the low tier. */
+function RendererTier() {
+  const gl = useThree((s) => s.gl)
   const quality = useSceneStore((s) => s.quality)
+  useEffect(() => {
+    gl.transmissionResolutionScale = quality === 'high' ? 1 : 0.5
+  }, [gl, quality])
+  return null
+}
+
+const showStats = typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('stats')
+
+export default function Experience() {
+  const quality = useSceneStore((s) => s.quality)
+  const setQuality = useSceneStore((s) => s.setQuality)
   return (
     <div className="stage">
       <Canvas
@@ -37,6 +51,15 @@ export function Experience() {
         }}
         camera={{ position: SHOTS[0].camera, fov: 40, near: 0.05, far: 700 }}
       >
+        {/* if the frame rate stays low on the high tier, drop to the low tier once */}
+        <PerformanceMonitor
+          flipflops={1}
+          onDecline={() => {
+            if (useSceneStore.getState().quality === 'high') setQuality('low')
+          }}
+        />
+        {showStats && <Stats />}
+        <RendererTier />
         <ResponsiveLens />
         <CameraRig />
         <LightingRig />

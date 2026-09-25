@@ -2,6 +2,7 @@ import { useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { Html } from '@react-three/drei'
 import * as THREE from 'three'
+import { useSceneStore } from '../store/useSceneStore'
 import { cinema, SHOTS, shotWeight } from './director'
 
 const v = new THREE.Vector3()
@@ -15,12 +16,15 @@ function clampedPosition(el: THREE.Object3D, camera: THREE.Camera, size: { width
   v.setFromMatrixPosition(el.matrixWorld).project(camera)
   const x = (v.x * 0.5 + 0.5) * size.width
   const y = (-v.y * 0.5 + 0.5) * size.height
+  const narrow = size.width < 600
   const w = Math.min(340, size.width * 0.78) + 20
-  const h = size.width < 600 ? 210 : 190
-  const bottomBar = size.width < 600 ? 90 : 24
+  const h = narrow ? 210 : 190
+  const bottomBar = narrow ? 90 : 24
+  // on phones keep captions in the lower part of the frame, clear of the subject
+  const minY = narrow ? size.height * 0.58 : 96
   return [
     THREE.MathUtils.clamp(x, 16, Math.max(16, size.width - w - 16)),
-    THREE.MathUtils.clamp(y, 96, Math.max(96, size.height - h - bottomBar)),
+    THREE.MathUtils.clamp(y, minY, Math.max(minY, size.height - h - bottomBar)),
   ]
 }
 
@@ -30,10 +34,13 @@ function clampedPosition(el: THREE.Object3D, camera: THREE.Camera, size: { width
  */
 export function Captions() {
   const refs = useRef<(HTMLDivElement | null)[]>([])
+  const reducedMotion = useSceneStore((s) => s.reducedMotion)
   useFrame(() => {
+    // with reduced motion the camera cuts between shots, so captions cut with it
+    const p = reducedMotion ? Math.round(cinema.p) : cinema.p
     refs.current.forEach((el, i) => {
       if (!el) return
-      const w = shotWeight(cinema.p, i, 0.42)
+      const w = shotWeight(p, i, 0.42)
       const o = Math.min(1, w * 1.6)
       el.style.opacity = o.toFixed(3)
       el.style.transform = `translateY(${((1 - o) * 14).toFixed(1)}px)`

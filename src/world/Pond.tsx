@@ -38,7 +38,8 @@ export function Pond() {
   const lotus = useMemo(() => {
     const rnd = mulberry32(163)
     return Array.from({ length: 22 }, () => {
-      const a = rnd() * Math.PI * 2
+      // keep the near (camera-side) edge clear so leaves don't block the moon's reflection
+      const a = Math.PI + rnd() * Math.PI
       const r = 0.55 + rnd() * 0.4
       return {
         x: POND.x + Math.cos(a) * POND.rx * r,
@@ -61,9 +62,12 @@ export function Pond() {
     return geos
   }, [])
 
+  const frames = useRef(0)
   useFrame(() => {
-    // skip the (expensive) reflection render while the pond is off-screen
-    water.current.visible = cinema.p > 1.6
+    // skip the (expensive) reflection render while the pond is off-screen —
+    // but render it for the first frames so its shader compiles during loading, not mid-scroll
+    frames.current++
+    water.current.visible = cinema.p > 1.6 || frames.current < 4
   })
 
   return (
@@ -189,8 +193,9 @@ function MoonWater({ quality, ripple }: { quality: string; ripple: THREE.Texture
     return r
   }, [quality, ripple])
 
+  const still = useSceneStore((s) => s.reducedMotion)
   useFrame(({ clock }) => {
-    ;(reflector.material as THREE.ShaderMaterial).uniforms.uTime.value = clock.elapsedTime
+    if (!still) (reflector.material as THREE.ShaderMaterial).uniforms.uTime.value = clock.elapsedTime
   })
 
   return <primitive object={reflector} />

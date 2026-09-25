@@ -104,7 +104,8 @@ export function Procession() {
   const SPEED = 0.55 // m/s — an unhurried children's walk
 
   useFrame(({ clock }) => {
-    const time = reducedMotion ? 0 : clock.elapsedTime
+    // reduced motion: a still frame of the procession, spread along the front of the courtyard
+    const time = reducedMotion ? 11 : clock.elapsedTime
     walkers.forEach((w, i) => {
       const kid = kids.current[i]
       if (!kid) return

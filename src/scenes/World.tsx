@@ -48,6 +48,7 @@ function StrawMat() {
 /** The whole village, built once; the camera travels through it. */
 export function World() {
   const quality = useSceneStore((s) => s.quality)
+  const still = useSceneStore((s) => s.reducedMotion)
   return (
     <>
       <Suspense fallback={null}>
@@ -55,8 +56,8 @@ export function World() {
       </Suspense>
 
       <Terrain />
-      <Dinh position={[0, 0, -9]} />
-      <Banyan position={[-11.5, 0, -2.5]} />
+      <ModelSlot id="dinh-lang" position={[0, 0, -9]} fallback={<Dinh />} />
+      <ModelSlot id="cay-da" position={[-11.5, 0, -2.5]} fallback={<Banyan />} />
       {HOUSES.map((h, i) => (
         <House key={i} position={h.p} rotation={h.r} width={h.w} withLight={h.light} />
       ))}
@@ -67,7 +68,7 @@ export function World() {
       <StrawMat />
       <group position={TABLE_POS} rotation-y={-0.25}>
         <LowTable />
-        <MamCo position={[0, TABLE_TOP_HEIGHT + 0.012, 0]} />
+        <ModelSlot id="mam-co" position={[0, TABLE_TOP_HEIGHT + 0.012, 0]} fallback={<MamCo />} />
         <ContactShadows position={[0, TABLE_TOP_HEIGHT + 0.006, 0]} scale={[1.5, 1]} resolution={512} blur={1.6} far={0.3} opacity={0.6} frames={1} color="#200806" />
         <BambooPole position={[0.95, 0, -0.75]} tip={[-0.7, 1.72, 0.75]} />
         <ModelSlot
@@ -102,8 +103,8 @@ export function World() {
       ))}
 
       {/* fireflies drifting over the courtyard and the pond */}
-      <Sparkles count={quality === 'high' ? 70 : 25} scale={[18, 3, 16]} position={[0, 1.6, 3]} size={3} speed={0.25} opacity={0.9} color="#ffcf7a" noise={1.4} />
-      <Sparkles count={quality === 'high' ? 50 : 18} scale={[22, 2, 12]} position={[1, 1, 24]} size={3} speed={0.2} opacity={0.8} color="#d8ff9a" noise={1} />
+      <Sparkles count={quality === 'high' ? 70 : 25} scale={[18, 3, 16]} position={[0, 1.6, 3]} size={3} speed={still ? 0 : 0.25} opacity={0.9} color="#ffcf7a" noise={1.4} />
+      <Sparkles count={quality === 'high' ? 50 : 18} scale={[22, 2, 12]} position={[1, 1, 24]} size={3} speed={still ? 0 : 0.2} opacity={0.8} color="#d8ff9a" noise={1} />
     </>
   )
 }

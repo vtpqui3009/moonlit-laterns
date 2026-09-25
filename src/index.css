@@ -136,11 +136,7 @@ html, body {
   box-shadow: 0 0 12px var(--lantern);
 }
 .chapters__item:focus-visible { outline: 1px solid var(--lantern); outline-offset: 4px; }
-@media (max-width: 600px) {
-  .chapters { top: auto; bottom: 18px; right: 50%; transform: translateX(50%); flex-direction: row; gap: 16px; }
-  .chapters__label { display: none; }
-  .hint { bottom: 52px; }
-}
+
 .hint--gone { opacity: 0; }
 .hint {
   position: fixed;
@@ -215,4 +211,11 @@ html, body {
 }
 @media (prefers-reduced-motion: reduce) {
   .loader__moon { animation: none; }
+}
+
+/* phones: chapter dots along the bottom, hint above them (kept last so it wins the cascade) */
+@media (max-width: 600px) {
+  .chapters { top: auto; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); right: 50%; transform: translateX(50%); flex-direction: row; gap: 16px; }
+  .chapters__label { display: none; }
+  .hint { bottom: calc(52px + env(safe-area-inset-bottom, 0px)); }
 }
