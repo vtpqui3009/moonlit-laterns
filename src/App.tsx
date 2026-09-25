@@ -1,16 +1,21 @@
+import { ChapterNav } from './components/ChapterNav'
 import { Experience } from './components/Experience'
 import { Loader } from './components/Loader'
+import { ScrollDirector } from './cinema/ScrollDirector'
+import { useSceneStore } from './store/useSceneStore'
 
 export default function App() {
+  const stage = useSceneStore((s) => s.stage)
   return (
     <>
       <Experience />
-      <header className="title">
+      <header className={`title ${stage > 0 ? 'title--quiet' : ''}`}>
         <p className="title__eyebrow">Tết Trung Thu · Rằm tháng Tám</p>
         <h1>Đêm hội trăng rằm</h1>
-        <p className="title__step">Bước 1 · Đèn ông sao, ánh sáng &amp; bóng đổ</p>
       </header>
-      <p className="hint">Kéo để xoay · cuộn để lại gần</p>
+      <ChapterNav />
+      <p className={`hint ${stage > 0 ? 'hint--gone' : ''}`}>Cuộn để bước vào đêm hội</p>
+      <ScrollDirector />
       <Loader />
     </>
   )

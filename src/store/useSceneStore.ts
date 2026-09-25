@@ -5,6 +5,13 @@ export type Quality = 'high' | 'low'
 const prefersReducedMotion = () =>
   typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
 
+/** `?q=low` / `?q=high` forces a quality tier (handy for testing). */
+const forcedQuality = (): Quality | null => {
+  if (typeof window === 'undefined') return null
+  const q = new URLSearchParams(window.location.search).get('q')
+  return q === 'low' || q === 'high' ? q : null
+}
+
 const isLikelyMobile = () =>
   typeof window !== 'undefined' &&
   (window.matchMedia?.('(pointer: coarse)').matches || window.innerWidth < 768)
@@ -24,7 +31,7 @@ interface SceneState {
 export const useSceneStore = create<SceneState>((set) => ({
   stage: 0,
   progress: 0,
-  quality: isLikelyMobile() ? 'low' : 'high',
+  quality: forcedQuality() ?? (isLikelyMobile() ? 'low' : 'high'),
   reducedMotion: prefersReducedMotion(),
   setStage: (stage) => set({ stage }),
   setProgress: (progress) => set({ progress }),

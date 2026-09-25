@@ -1,34 +1,25 @@
-import { Environment, Sparkles, Stars } from '@react-three/drei'
-import { useSceneStore } from '../store/useSceneStore'
+import { Environment, Stars } from '@react-three/drei'
 import { SafeBoundary } from '../components/SafeBoundary'
-import { Sky } from './Sky'
+import { useSceneStore } from '../store/useSceneStore'
 import HDRI from './hdriUrl'
+import { Moon } from './Moon'
+import { Sky } from './Sky'
 
 /**
- * Night-time image based lighting + sky.
- * The HDRI ("Dikhololo Night", Poly Haven, CC0) is used only for reflections/IBL,
- * dimmed and tinted blue; the visible sky is our own gradient dome + star field.
+ * Night image-based lighting + sky. The HDRI ("Dikhololo Night", Poly Haven,
+ * CC0) is used only for reflections/IBL; the visible sky is our own dome,
+ * star field and moon, all driven by the playhead.
  */
-export function NightEnvironment({ sunDirection }: { sunDirection: [number, number, number] }) {
+export function NightEnvironment() {
   const quality = useSceneStore((s) => s.quality)
   return (
     <>
       <SafeBoundary label="HDRI" fallback={null}>
-        <Environment files={HDRI} environmentIntensity={0.35} environmentRotation={[0, Math.PI * 0.6, 0]} />
+        <Environment files={HDRI} environmentIntensity={0.4} environmentRotation={[0, Math.PI * 0.6, 0]} />
       </SafeBoundary>
-      <Sky sunDirection={sunDirection} />
-      <Stars radius={180} depth={60} count={quality === 'high' ? 4000 : 1500} factor={5} saturation={0.2} fade speed={0.4} />
-      {/* fireflies / drifting sparks */}
-      <Sparkles
-        count={quality === 'high' ? 60 : 24}
-        scale={[7, 2.5, 5]}
-        position={[0, 1.4, 0]}
-        size={2.2}
-        speed={0.25}
-        opacity={0.8}
-        color="#ffc27a"
-        noise={1.2}
-      />
+      <Sky />
+      <Stars radius={280} depth={60} count={quality === 'high' ? 5000 : 2000} factor={6} saturation={0.15} fade speed={0.3} />
+      <Moon />
     </>
   )
 }

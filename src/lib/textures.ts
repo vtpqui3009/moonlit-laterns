@@ -5,18 +5,18 @@ import { mulberry32 } from './noise'
 // scene has real surface detail (paper crinkles, bamboo fibre, brick wear)
 // without shipping large image files.
 
-const cache = new Map<string, THREE.Texture>()
+export const textureCache = new Map<string, THREE.Texture>()
 
-function cached<T extends THREE.Texture>(key: string, make: () => T): T {
-  let tex = cache.get(key) as T | undefined
+export function cached<T extends THREE.Texture>(key: string, make: () => T): T {
+  let tex = textureCache.get(key) as T | undefined
   if (!tex) {
     tex = make()
-    cache.set(key, tex)
+    textureCache.set(key, tex)
   }
   return tex
 }
 
-function makeCanvas(w: number, h: number) {
+export function makeCanvas(w: number, h: number) {
   const c = document.createElement('canvas')
   c.width = w
   c.height = h
@@ -24,7 +24,7 @@ function makeCanvas(w: number, h: number) {
   return { c, ctx }
 }
 
-function toTexture(c: HTMLCanvasElement, color: boolean, repeat = 1) {
+export function toTexture(c: HTMLCanvasElement, color: boolean, repeat = 1) {
   const t = new THREE.CanvasTexture(c)
   t.colorSpace = color ? THREE.SRGBColorSpace : THREE.NoColorSpace
   t.wrapS = t.wrapT = THREE.RepeatWrapping
@@ -35,7 +35,7 @@ function toTexture(c: HTMLCanvasElement, color: boolean, repeat = 1) {
 }
 
 /** Converts a grayscale height canvas into a tangent-space normal map. */
-function heightToNormal(src: HTMLCanvasElement, strength: number) {
+export function heightToNormal(src: HTMLCanvasElement, strength: number) {
   const w = src.width
   const h = src.height
   const data = src.getContext('2d')!.getImageData(0, 0, w, h).data
@@ -191,7 +191,7 @@ function buildTiles() {
         col.ctx.arc(x + rnd() * w, y + rnd() * w, r, 0, Math.PI * 2)
         col.ctx.fill()
       }
-      const r = 110 + rnd() * 60
+      const r = 175 + rnd() * 60
       rough.ctx.fillStyle = `rgb(${r},${r},${r})`
       rough.ctx.fillRect(x, y, w, w)
       const b = 180 + rnd() * 60
