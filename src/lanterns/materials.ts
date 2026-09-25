@@ -2,7 +2,7 @@ import * as THREE from 'three'
 import { bambooTextures, cellophaneNormal, haloTexture, lanternGlow } from '../lib/textures'
 
 /** Base emissive strength of lantern paper (flicker modulates around it). */
-export const PAPER_GLOW = 1.25
+export const PAPER_GLOW = 1.05
 
 /**
  * Coloured cellophane ("giấy kính") stretched over the lantern frame.

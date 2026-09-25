@@ -42,7 +42,7 @@ export const SHOTS: Shot[] = [
       'Bánh nướng, bánh dẻo, mâm ngũ quả bày giữa sân. Cả nhà quây quần phá cỗ, chờ trăng lên đỉnh ngọn tre.',
     camera: [5.35, 1.22, 5.45],
     target: [3.3, 0.82, 2.85],
-    focus: [3.5, 0.55, 3],
+    focus: [3.45, 0.85, 2.95],
     captionAt: [2.35, 1.62, 4.2],
   },
   {
@@ -52,7 +52,7 @@ export const SHOTS: Shot[] = [
       'Tùng dinh dinh, cắc tùng dinh dinh… Đèn ông sao, đèn cá chép nối đuôi nhau quanh sân đình, theo nhịp trống múa lân.',
     camera: [-5.2, 1.15, 13.2],
     target: [-1.6, 1.15, 5.2],
-    focus: [-2.6, 1, 8.4],
+    focus: [-3.6, 1, 7.4],
     captionAt: [-6.2, 2.5, 5],
   },
   {
@@ -62,7 +62,7 @@ export const SHOTS: Shot[] = [
       'Trăng tròn nhất năm soi xuống ao làng. Trung Thu là tết của trẻ em, và của những người được trở về bên nhau.',
     camera: [1, 1.7, 35],
     target: [0.5, 5, -12],
-    focus: [0, 2, 8],
+    focus: [0.5, 1.5, 16],
     captionAt: [-9, 3.2, 20],
   },
 ]

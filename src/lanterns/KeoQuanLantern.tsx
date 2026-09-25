@@ -50,7 +50,7 @@ export function KeoQuanLantern({ intensity = 1.6, seed = 4 }: { intensity?: numb
         map: keoQuanPaper(),
         emissive: '#ffb060',
         emissiveMap: keoQuanPaper(),
-        emissiveIntensity: 1.1,
+        emissiveIntensity: 0.55,
         transparent: true,
         opacity: 0.78,
         side: THREE.DoubleSide,
@@ -67,7 +67,7 @@ export function KeoQuanLantern({ intensity = 1.6, seed = 4 }: { intensity?: numb
   useFrame(({ clock }, dt) => {
     const k = flicker(clock.elapsedTime, seed, reducedMotion)
     light.current.intensity = intensity * k
-    mats.paper.emissiveIntensity = 1.1 * (0.85 + (k - 0.82) * 0.8)
+    mats.paper.emissiveIntensity = 0.55 * (0.85 + (k - 0.82) * 0.8)
     if (!reducedMotion) drum.current.rotation.y += dt * 0.55
   })
 

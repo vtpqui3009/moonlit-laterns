@@ -4,6 +4,7 @@ import * as THREE from 'three'
 import { CameraRig } from '../cinema/CameraRig'
 import { Captions } from '../cinema/Captions'
 import { LightingRig } from '../cinema/LightingRig'
+import { PostFX } from '../cinema/PostFX'
 import { SHOTS } from '../cinema/director'
 import { World } from '../scenes/World'
 import { useSceneStore } from '../store/useSceneStore'
@@ -41,6 +42,7 @@ export function Experience() {
         <LightingRig />
         <World />
         <Captions />
+        <PostFX />
       </Canvas>
     </div>
   )

@@ -150,7 +150,7 @@ function useFeastAssets() {
           sheen: 1,
           sheenColor: new THREE.Color('#eaffd8'),
         }),
-        brass: new THREE.MeshStandardMaterial({ color: '#b98a38', metalness: 0.95, roughness: 0.32 }),
+        brass: new THREE.MeshStandardMaterial({ color: '#a47a34', metalness: 0.9, roughness: 0.48 }),
         porcelain: new THREE.MeshPhysicalMaterial({ color: '#eef2f4', roughness: 0.15, clearcoat: 1 }),
         pomelo: new THREE.MeshPhysicalMaterial({ color: '#b4c24a', normalMap: peel, roughness: 0.5, clearcoat: 0.35, clearcoatRoughness: 0.4 }),
         mandarin: new THREE.MeshPhysicalMaterial({ color: '#f0861a', normalMap: peel, roughness: 0.45, clearcoat: 0.4 }),

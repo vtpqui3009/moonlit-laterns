@@ -85,7 +85,7 @@ export function LionDance({ position = [0, 0, 0] as [number, number, number], fa
       mouth: new THREE.MeshStandardMaterial({ color: '#3a0606', roughness: 0.8 }),
       teeth: new THREE.MeshStandardMaterial({ color: '#f4f0e0', roughness: 0.4 }),
       tongue: new THREE.MeshStandardMaterial({ color: '#e84a5a', roughness: 0.5 }),
-      eye: new THREE.MeshStandardMaterial({ color: '#fff6d0', emissive: '#ffe08a', emissiveIntensity: 2.6, roughness: 0.2 }),
+      eye: new THREE.MeshStandardMaterial({ color: '#fff6d0', emissive: '#ffe08a', emissiveIntensity: 1.8, roughness: 0.2 }),
       pupil: new THREE.MeshStandardMaterial({ color: '#050505', roughness: 0.1, metalness: 0.2 }),
       lid: new THREE.MeshStandardMaterial({ color: '#f2b01e', roughness: 0.5, side: THREE.DoubleSide }),
       gold: new THREE.MeshStandardMaterial({ color: '#e0a830', metalness: 0.8, roughness: 0.3 }),
@@ -268,7 +268,7 @@ export function LionDance({ position = [0, 0, 0] as [number, number, number], fa
           </mesh>
         ))}
         <instancedMesh ref={mane} args={[furGeo, furMat, 170]} castShadow />
-        <pointLight position={[0, 0.08, 0.5]} color="#ffe6a0" intensity={0.8} distance={3} decay={2} />
+        <pointLight position={[0, 0.08, 0.6]} color="#ffe6a0" intensity={0.3} distance={3} decay={2} />
       </group>
     </group>
   )
