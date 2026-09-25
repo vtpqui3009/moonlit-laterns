@@ -1,5 +1,4 @@
 import { ContactShadows, Sparkles } from '@react-three/drei'
-import { Suspense } from 'react'
 import { ModelSlot } from '../components/ModelSlot'
 import { MamCo } from '../feast/MamCo'
 import { chieuCoi } from '../feast/feastTextures'
@@ -52,9 +51,8 @@ export function World() {
   const still = useSceneStore((s) => s.reducedMotion)
   return (
     <>
-      <Suspense fallback={null}>
-        <NightEnvironment />
-      </Suspense>
+      {/* suspends until the HDRI is in, together with the rest of the world (see Experience) */}
+      <NightEnvironment />
 
       <Terrain />
       <ModelSlot id="dinh-lang" position={[0, 0, -9]} fallback={<Dinh />} />

@@ -3,8 +3,9 @@ import { INTRO } from '../letter'
 import { useSceneStore } from '../store/useSceneStore'
 
 /** The greeting card shown once everything is ready. The tap also unlocks sound. */
-export function IntroCard() {
+export function IntroCard({ ready }: { ready: boolean }) {
   const start = () => {
+    if (!ready) return
     const { reducedMotion, set } = useSceneStore.getState()
     window.scrollTo(0, 0)
     ambience.start({ drum: !reducedMotion })
@@ -15,8 +16,8 @@ export function IntroCard() {
       <p className="intro__eyebrow">{INTRO.eyebrow}</p>
       <h1 className="intro__title">{INTRO.title}</h1>
       <p className="intro__subtitle">{INTRO.subtitle}</p>
-      <button type="button" className="intro__start" onClick={start} autoFocus>
-        {INTRO.start}
+      <button type="button" className="intro__start" onClick={start} disabled={!ready} aria-busy={!ready} autoFocus={ready}>
+        {ready ? INTRO.start : 'Đang thắp đèn…'}
       </button>
       <p className="intro__hint">
         <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">

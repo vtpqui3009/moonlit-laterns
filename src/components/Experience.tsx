@@ -1,5 +1,5 @@
 import { Canvas, useThree } from '@react-three/fiber'
-import { useEffect, useRef } from 'react'
+import { Suspense, useEffect, useRef } from 'react'
 import { PerformanceMonitor, Stats, useProgress } from '@react-three/drei'
 import * as THREE from 'three'
 import { CameraRig } from '../cinema/CameraRig'
@@ -85,12 +85,18 @@ export default function Experience() {
         />
         {showStats && <Stats />}
         <RendererTier />
-        <Warmup />
         <ResponsiveLens />
         <CameraRig />
         <LightingRig />
-        <World />
-        <Captions />
+        {/* One boundary for the whole world: nothing renders until the HDRI has
+            loaded, so every shader compiles once, already with the environment map
+            (otherwise they compile without it, then all over again). Warmup sits
+            inside so it runs right after the world has mounted. */}
+        <Suspense fallback={null}>
+          <World />
+          <Captions />
+          <Warmup />
+        </Suspense>
         <PostFX />
       </Canvas>
     </div>

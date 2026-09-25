@@ -260,6 +260,13 @@ html.is-locked, html.is-locked body { overflow: hidden; }
   box-shadow: 0 0 40px rgba(255, 160, 70, 0.4);
   outline: none;
 }
+.intro__start:disabled {
+  cursor: progress;
+  opacity: 0.6;
+  box-shadow: none;
+  animation: breathe 1.8s ease-in-out infinite;
+}
+@keyframes breathe { 50% { opacity: 0.85; } }
 .intro__hint { display: flex; align-items: center; gap: 6px; margin: 6px 0 0; font-size: 12px; color: var(--ink-dim); }
 @keyframes rise-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
 
@@ -375,7 +382,7 @@ html.is-locked, html.is-locked body { overflow: hidden; }
 .letter--still .letter__line, .letter--still .letter__actions { animation: none; opacity: 1; }
 @keyframes line-in { from { opacity: 0; transform: translateY(6px); filter: blur(3px); } to { opacity: 1; transform: none; filter: none; } }
 @media (prefers-reduced-motion: reduce) {
-  .intro, .letter-wrap, .wish__glow { animation: none; }
+  .intro, .letter-wrap, .wish__glow, .intro__start:disabled { animation: none; }
 }
 
 /* phones: chapter dots along the bottom, hint above them (kept last so it wins the cascade) */

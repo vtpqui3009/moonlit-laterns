@@ -4,9 +4,9 @@ import { useSceneStore } from '../store/useSceneStore'
 import { IntroCard } from './Intro'
 
 /**
- * Full-screen veil: real asset progress (useProgress), then "lighting the
- * lanterns" while shaders compile, then the greeting card. Scrolling stays
- * locked until the viewer taps "Bắt đầu".
+ * Full-screen veil: real asset progress (useProgress), then the greeting card
+ * as soon as everything is downloaded. Shaders compile behind the greeting;
+ * "Bắt đầu" unlocks once they're ready. Scrolling stays locked until the tap.
  */
 export function Loader() {
   const { progress, item, loaded, total } = useProgress()
@@ -26,13 +26,13 @@ export function Loader() {
   const assetsDone = progress >= 100
 
   return (
-    <div className={`loader ${started ? 'loader--done' : ''} ${ready ? 'loader--ready' : ''}`} aria-live="polite">
+    <div className={`loader ${started ? 'loader--done' : ''} ${assetsDone ? 'loader--ready' : ''}`} aria-live="polite">
       <div className="loader__moon" />
-      {ready ? (
-        <IntroCard />
+      {assetsDone ? (
+        <IntroCard ready={ready} />
       ) : (
         <>
-          <p className="loader__title">{assetsDone ? 'Đang thắp đèn…' : 'Đang chuẩn bị đêm hội…'}</p>
+          <p className="loader__title">Đang chuẩn bị đêm hội…</p>
           <div className="loader__bar" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(progress)}>
             <span style={{ transform: `scaleX(${progress / 100})` }} />
           </div>
