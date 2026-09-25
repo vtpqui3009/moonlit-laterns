@@ -1,9 +1,10 @@
-import { Component, Suspense, useEffect, useMemo, useRef, type ReactNode } from 'react'
+import { Suspense, useEffect, useMemo, useRef, type ReactNode } from 'react'
 import { useAnimations, useGLTF } from '@react-three/drei'
 import type { ThreeElements } from '@react-three/fiber'
 import * as THREE from 'three'
 import { clone as cloneSkinned } from 'three/examples/jsm/utils/SkeletonUtils.js'
 import manifest from 'virtual:model-manifest'
+import { SafeBoundary } from './SafeBoundary'
 
 type GroupProps = ThreeElements['group']
 
@@ -27,11 +28,11 @@ export function ModelSlot({ id, fallback, clip, modelScale = 1, ...group }: Mode
   return (
     <group {...group}>
       {url ? (
-        <GltfErrorBoundary fallback={fallback} id={id}>
+        <SafeBoundary fallback={fallback} label={`ModelSlot models/${id}`}>
           <Suspense fallback={null}>
             <GltfModel url={`${import.meta.env.BASE_URL}${url}`} clip={clip} scale={modelScale} />
           </Suspense>
-        </GltfErrorBoundary>
+        </SafeBoundary>
       ) : (
         fallback
       )}
@@ -79,17 +80,4 @@ function GltfModel({ url, clip, scale }: { url: string; clip?: string; scale: nu
       <primitive object={scene} />
     </group>
   )
-}
-
-class GltfErrorBoundary extends Component<{ fallback: ReactNode; id: string; children: ReactNode }, { failed: boolean }> {
-  state = { failed: false }
-  static getDerivedStateFromError() {
-    return { failed: true }
-  }
-  componentDidCatch(error: unknown) {
-    console.warn(`[ModelSlot] Could not load models/${this.props.id}.glb — using procedural model.`, error)
-  }
-  render() {
-    return this.state.failed ? this.props.fallback : this.props.children
-  }
 }

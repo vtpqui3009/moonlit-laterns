@@ -1,8 +1,8 @@
 import { Environment, Sparkles, Stars } from '@react-three/drei'
 import { useSceneStore } from '../store/useSceneStore'
+import { SafeBoundary } from '../components/SafeBoundary'
 import { Sky } from './Sky'
-
-const HDRI = `${import.meta.env.BASE_URL}hdri/night_1k.exr`
+import HDRI from './hdriUrl'
 
 /**
  * Night-time image based lighting + sky.
@@ -13,7 +13,9 @@ export function NightEnvironment({ sunDirection }: { sunDirection: [number, numb
   const quality = useSceneStore((s) => s.quality)
   return (
     <>
-      <Environment files={HDRI} environmentIntensity={0.35} environmentRotation={[0, Math.PI * 0.6, 0]} />
+      <SafeBoundary label="HDRI" fallback={null}>
+        <Environment files={HDRI} environmentIntensity={0.35} environmentRotation={[0, Math.PI * 0.6, 0]} />
+      </SafeBoundary>
       <Sky sunDirection={sunDirection} />
       <Stars radius={180} depth={60} count={quality === 'high' ? 4000 : 1500} factor={5} saturation={0.2} fade speed={0.4} />
       {/* fireflies / drifting sparks */}
