@@ -25,6 +25,11 @@ Tham số URL hữu ích khi kiểm thử:
 - `?q=low` / `?q=high`: ép mức chất lượng.
 - `?stats`: hiện bảng FPS (drei `Stats`).
 
+## Deploy (GitHub Pages)
+Workflow `.github/workflows/deploy.yml` build và deploy mỗi khi có push lên `main`
+(hoặc chạy tay trong tab Actions). Chỉ cần bật một lần: **Settings → Pages → Source: GitHub Actions**.
+Trang sẽ ở `https://vtpqui3009.github.io/moonlit-laterns/`.
+
 ## Kiến trúc
 
 | Thư mục | Nội dung |
