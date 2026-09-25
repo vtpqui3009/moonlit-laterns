@@ -3,6 +3,8 @@ import { useFrame } from '@react-three/fiber'
 import { Billboard } from '@react-three/drei'
 import * as THREE from 'three'
 import { fbm1 } from '../lib/noise'
+import { cinema } from '../cinema/director'
+import { flicker, gateShadow } from './candleLight'
 import { useSceneStore } from '../store/useSceneStore'
 import { starFaceGeometry, starFrameGeometry, starTips, tasselGeometry } from './starGeometry'
 import {
@@ -33,6 +35,8 @@ export interface StarLanternProps {
   castLightShadow?: boolean
   /** Enables the per-lantern PointLight at all (distant lanterns can rely on emissive + halo). */
   withLight?: boolean
+  /** Playhead range in which the shadow map is refreshed (see gateShadow). */
+  shadowWhen?: [number, number]
   seed?: number
 }
 
@@ -46,6 +50,7 @@ export function StarLantern({
   intensity = 3,
   castLightShadow = true,
   withLight = true,
+  shadowWhen,
   seed = 1,
 }: StarLanternProps) {
   const reducedMotion = useSceneStore((s) => s.reducedMotion)
@@ -82,9 +87,9 @@ export function StarLantern({
   useFrame(({ clock }) => {
     const t = clock.elapsedTime
     // Candle flicker: layered noise, never fully steady, never strobing.
-    const f = 0.82 + 0.18 * fbm1(t * 5.3 + seed * 7.1, 3) + 0.05 * Math.sin(t * 23 + seed)
-    const k = reducedMotion ? 0.95 + (f - 0.82) * 0.25 : f
+    const k = flicker(t, seed, reducedMotion)
     if (light.current) light.current.intensity = intensity * k
+    gateShadow(light.current, cinema.p, shadowWhen)
     mats.paper.emissiveIntensity = PAPER_GLOW * (0.85 + (k - 0.82) * 0.8)
     flame.current.scale.set(1, 0.85 + (k - 0.8) * 1.4, 1)
 
@@ -137,7 +142,7 @@ export function StarLantern({
               intensity={intensity}
               decay={2}
               castShadow={castLightShadow}
-              shadow-mapSize={[1024, 1024]}
+              shadow-mapSize={[512, 512]}
               shadow-radius={6}
               shadow-bias={-0.002}
               shadow-normalBias={0.02}
