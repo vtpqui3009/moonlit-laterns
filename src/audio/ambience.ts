@@ -321,6 +321,7 @@ class Ambience {
 
   /** Use the viewer-supplied track (public/audio/nhac-nen.mp3) instead of the synthesised tune, if present. */
   private async tryCustomTrack() {
+    if (!__HAS_CUSTOM_TRACK__) return
     try {
       const res = await fetch(CUSTOM_TRACK, { method: 'HEAD' })
       if (!res.ok || !(res.headers.get('content-type') ?? '').startsWith('audio')) return

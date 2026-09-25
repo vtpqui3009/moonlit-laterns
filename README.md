@@ -25,10 +25,11 @@ Tham số URL hữu ích khi kiểm thử:
 - `?q=low` / `?q=high`: ép mức chất lượng.
 - `?stats`: hiện bảng FPS (drei `Stats`).
 
-## Deploy (GitHub Pages)
-Workflow `.github/workflows/deploy.yml` build và deploy mỗi khi có push lên `main`
-(hoặc chạy tay trong tab Actions). Chỉ cần bật một lần: **Settings → Pages → Source: GitHub Actions**.
-Trang sẽ ở `https://vtpqui3009.github.io/moonlit-laterns/`.
+## Deploy (Netlify)
+- **Kéo thả (Netlify Drop):** `npm run build`, rồi kéo thư mục `dist/` (hoặc file zip của nó) vào
+  https://app.netlify.com/drop.
+- **Tự cập nhật từ Git:** Netlify → *Add new site → Import from Git* → chọn repo này.
+  `netlify.toml` đã khai báo sẵn lệnh build (`npm run build`), thư mục `dist` và Node 22.
 
 ## Kiến trúc
 

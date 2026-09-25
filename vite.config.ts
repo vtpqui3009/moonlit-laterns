@@ -27,6 +27,8 @@ export default defineConfig(({ mode }) => ({
   // Relative base so the built site works from any sub-path (static hosting, artifact preview).
   base: './',
   plugins: [react(), modelManifest(), mode === 'single' && inlineHdri()],
+  // only look for the optional custom soundtrack if it was actually shipped
+  define: { __HAS_CUSTOM_TRACK__: JSON.stringify(fs.existsSync('public/audio/nhac-nen.mp3')) },
   build:
     mode === 'single'
       ? {
